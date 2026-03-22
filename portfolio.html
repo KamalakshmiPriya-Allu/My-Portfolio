@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allu. Kamalakshmi Priya - Data Science Portfolio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #f5f3ff;
+            --secondary: #e8dff8;
+            --accent-blue: #6366f1;
+            --accent-purple: #a78bfa;
+            --accent-pink: #f472b6;
+            --accent-cyan: #06b6d4;
+            --text-dark: #2d1b4e;
+            --text-light: #6b5280;
+            --white: #ffffff;
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, #f0e8ff 100%);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+        header {
+            position: fixed; top: 0; width: 100%;
+            backdrop-filter: blur(20px);
+            background: rgba(245, 243, 255, 0.85);
+            z-index: 100; padding: 1.5rem 3rem;
+            border-bottom: 1px solid rgba(163, 139, 250, 0.15);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .logo {
+            font-size: 1.1rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            letter-spacing: -0.5px; white-space: nowrap;
+        }
+        nav { display: flex; gap: 3rem; }
+        nav a {
+            color: var(--text-dark); text-decoration: none;
+            font-size: 0.9rem; font-weight: 600; position: relative; transition: color 0.3s ease;
+        }
+        nav a::after {
+            content: ''; position: absolute; bottom: -5px; left: 0;
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-pink));
+            transition: width 0.3s ease;
+        }
+        nav a:hover { color: var(--accent-blue); }
+        nav a:hover::after { width: 100%; }
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            justify-content: space-between; padding: 8rem 4rem 4rem;
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -50%; right: -20%;
+            width: 900px; height: 900px;
+            background: radial-gradient(circle, rgba(163,139,250,0.15) 0%, transparent 70%);
+            border-radius: 50%; animation: rotate 20s linear infinite;
+        }
+        .hero::after {
+            content: ''; position: absolute; bottom: -30%; left: -10%;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(244,114,182,0.1) 0%, transparent 70%);
+            border-radius: 50%; animation: rotate 25s linear infinite reverse;
+        }
+        @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hero-content { flex: 1; z-index: 10; max-width: 650px; }
+        .hero-content h1 {
+            font-size: 5.5rem; font-weight: 900; line-height: 1;
+            margin-bottom: 1.5rem; letter-spacing: -2px;
+        }
+        .hero-content .highlight {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-name {
+            font-size: 1.1rem; font-weight: 800; letter-spacing: 2px;
+            text-transform: uppercase; color: var(--accent-blue);
+            margin-bottom: 1rem; opacity: 0.85;
+        }
+        .hero-subtitle { font-size: 1.4rem; color: var(--text-light); margin-bottom: 1rem; font-weight: 500; }
+        .hero-description { font-size: 1.05rem; color: var(--text-light); margin-bottom: 3rem; line-height: 1.9; max-width: 500px; }
+        .cta-group { display: flex; gap: 1.2rem; flex-wrap: wrap; }
+        .btn {
+            padding: 1rem 2.2rem; border: none; border-radius: 50px;
+            font-size: 0.95rem; font-weight: 700; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1);
+            text-decoration: none; display: inline-block; position: relative; overflow: hidden;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white; box-shadow: 0 20px 60px rgba(99,102,241,0.3);
+        }
+        .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 30px 80px rgba(99,102,241,0.4); }
+        .btn-secondary {
+            background: var(--white); color: var(--accent-blue);
+            border: 2px solid var(--accent-blue); box-shadow: 0 10px 30px rgba(99,102,241,0.1);
+        }
+        .btn-secondary:hover { background: var(--secondary); transform: translateY(-5px); }
+        .hero-3d { flex: 1; height: 600px; position: relative; }
+        .chapter {
+            min-height: 100vh; padding: 6rem 4rem; position: relative;
+            display: flex; align-items: center; overflow: hidden;
+        }
+        .chapter-content { max-width: 900px; z-index: 10; width: 100%; }
+        .chapter-number { font-size: 0.9rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1rem; }
+        .chapter-title { font-size: 3.5rem; font-weight: 900; margin-bottom: 2rem; line-height: 1.2; }
+        .chapter-title .gradient {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-pink));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .chapter-text { font-size: 1.1rem; color: var(--text-light); margin-bottom: 2rem; line-height: 2; max-width: 700px; }
+        .skills-showcase { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 4rem; }
+        .skill-domain {
+            background: linear-gradient(135deg, var(--white), rgba(255,255,255,0.5));
+            padding: 0; border-radius: 25px; border: 1px solid rgba(163,139,250,0.3);
+            backdrop-filter: blur(20px); position: relative; overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1); display: flex; flex-direction: column;
+        }
+        .skill-domain:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--accent-pink);
+            box-shadow: 0 40px 80px rgba(99,102,241,0.2), 0 0 60px rgba(244,114,182,0.15);
+            background: linear-gradient(135deg, var(--white), rgba(232,223,248,0.8));
+        }
+        .skill-header { padding: 2.5rem 2.5rem 1.5rem; position: relative; z-index: 2; display: flex; align-items: flex-start; gap: 1.5rem; }
+        .skill-icon {
+            font-size: 2rem; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(167,139,250,0.1));
+            border-radius: 18px; flex-shrink: 0; transition: all 0.4s ease;
+        }
+        .skill-domain:hover .skill-icon { background: linear-gradient(135deg, rgba(99,102,241,0.25), rgba(244,114,182,0.15)); transform: scale(1.1) rotate(5deg); }
+        .skill-title-wrapper { flex: 1; }
+        .skill-domain h3 { font-size: 1.4rem; margin-bottom: 0.5rem; color: var(--text-dark); font-weight: 800; letter-spacing: -0.5px; }
+        .skill-count { font-size: 0.75rem; color: var(--accent-blue); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .skill-list { display: flex; flex-wrap: wrap; gap: 0.7rem; padding: 0 2.5rem 2.5rem; position: relative; z-index: 2; }
+        .skill-pill {
+            background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(167,139,250,0.05));
+            color: var(--accent-blue); padding: 0.65rem 1.4rem; border-radius: 50px;
+            font-size: 0.82rem; font-weight: 700; border: 1.5px solid rgba(99,102,241,0.25);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.320, 1); cursor: default;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .skill-pill:hover {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white; transform: translateY(-4px) scale(1.1);
+            box-shadow: 0 15px 35px rgba(99,102,241,0.3); border-color: var(--accent-blue);
+        }
+        .projects-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; margin-top: 3rem; }
+        .project-story {
+            background: linear-gradient(135deg, var(--white), var(--secondary));
+            border: 1px solid rgba(163,139,250,0.3); border-radius: 25px; padding: 3rem;
+            position: relative; overflow: hidden; transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+        }
+        .project-story:hover { transform: translateY(-15px); box-shadow: 0 40px 80px rgba(99,102,241,0.2); border-color: var(--accent-pink); }
+        .project-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; position: relative; z-index: 2; }
+        .project-meta { display: flex; gap: 1rem; align-items: center; }
+        .project-icon {
+            font-size: 2.5rem; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(167,139,250,0.1)); border-radius: 15px;
+        }
+        .project-info h3 { font-size: 1.8rem; margin-bottom: 0.3rem; color: var(--text-dark); font-weight: 800; }
+        .project-category { color: var(--accent-blue); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .project-narrative { font-size: 1.05rem; color: var(--text-light); margin: 2rem 0; line-height: 1.9; position: relative; z-index: 2; }
+        .project-highlights {
+            background: rgba(99,102,241,0.05); padding: 1.5rem;
+            border-left: 4px solid var(--accent-blue); border-radius: 10px; margin-bottom: 2rem; position: relative; z-index: 2;
+        }
+        .project-highlights strong { color: var(--accent-blue); font-weight: 700; }
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; position: relative; z-index: 2; }
+        .tech-item {
+            background: var(--white); padding: 1rem; border-radius: 12px; text-align: center;
+            border: 1px solid rgba(163,139,250,0.2); transition: all 0.3s ease; cursor: default;
+        }
+        .tech-item:hover { border-color: var(--accent-pink); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(244,114,182,0.15); }
+        .tech-item .tech-emoji { font-size: 1.5rem; display: block; margin-bottom: 0.3rem; }
+        .tech-item span { display: block; font-size: 0.75rem; font-weight: 700; color: var(--accent-blue); text-transform: uppercase; letter-spacing: 0.5px; }
+        .timeline { position: relative; margin-top: 3rem; }
+        .timeline-item { margin-bottom: 3rem; padding-left: 60px; position: relative; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: 15px; top: 0;
+            width: 20px; height: 20px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50%; border: 3px solid var(--white); box-shadow: 0 0 0 3px var(--accent-blue);
+        }
+        .timeline-item::after {
+            content: ''; position: absolute; left: 24px; top: 30px;
+            width: 2px; height: calc(100% + 20px);
+            background: linear-gradient(180deg, var(--accent-blue), transparent);
+        }
+        .timeline-item:last-child::after { display: none; }
+        .timeline-content {
+            background: var(--white); padding: 1.5rem; border-radius: 15px;
+            border-left: 4px solid var(--accent-blue); transition: all 0.3s ease;
+        }
+        .timeline-content:hover { transform: translateX(10px); border-left-color: var(--accent-pink); box-shadow: 0 15px 40px rgba(99,102,241,0.15); }
+        .timeline-content h4 { color: var(--accent-blue); margin-bottom: 0.5rem; font-weight: 700; }
+        .timeline-content p { color: var(--text-light); font-size: 0.95rem; }
+        .contact-chapter { min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; }
+        .contact-content { max-width: 700px; z-index: 10; }
+        .contact-content h2 { font-size: 4rem; font-weight: 900; margin-bottom: 1.5rem; line-height: 1.1; }
+        .contact-content > p { font-size: 1.2rem; color: var(--text-light); margin-bottom: 3rem; line-height: 1.8; }
+        .contact-methods { display: flex; flex-direction: column; gap: 1rem; align-items: center; }
+        .contact-method {
+            display: flex; align-items: center; gap: 1rem; font-size: 1.05rem;
+            color: var(--text-dark); padding: 1rem 2rem; background: var(--white);
+            border-radius: 50px; border: 2px solid rgba(163,139,250,0.2);
+            transition: all 0.3s ease; cursor: pointer; text-decoration: none; min-width: 280px; justify-content: center;
+        }
+        .contact-method:hover { border-color: var(--accent-blue); box-shadow: 0 15px 40px rgba(99,102,241,0.2); transform: translateY(-3px); color: var(--accent-blue); }
+        .contact-icon { font-size: 1.5rem; }
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            z-index: 101; width: 0%; transition: width 0.1s linear;
+        }
+        .floating-shape { position: fixed; pointer-events: none; z-index: 1; }
+        .shape-1 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(99,102,241,0.08), transparent); border-radius: 50%; top: 10%; right: 5%; animation: float 15s ease-in-out infinite; }
+        .shape-2 { width: 200px; height: 200px; background: radial-gradient(circle, rgba(244,114,182,0.08), transparent); border-radius: 50%; bottom: 20%; left: 3%; animation: float 12s ease-in-out infinite reverse; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(50px); } }
+        @media (max-width: 768px) {
+            header { padding: 1rem 1.5rem; }
+            nav { gap: 1rem; }
+            nav a { font-size: 0.8rem; }
+            .logo { font-size: 1.1rem; }
+            .hero { flex-direction: column; padding: 6rem 1.5rem 2rem; min-height: 100vh; }
+            .hero-3d { height: 300px; margin-top: 2rem; width: 100%; }
+            .hero-content h1 { font-size: 2.8rem; }
+            .chapter { padding: 3rem 1.5rem; min-height: auto; }
+            .chapter-title { font-size: 2rem; }
+            .skills-showcase { grid-template-columns: 1fr; }
+            .contact-content h2 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress"></div>
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+
+    <header>
+        <div class="logo">Kamalakshmi Priya</div>
+        <nav>
+            <a href="#hero">Journey</a>
+            <a href="#skills">Expertise</a>
+            <a href="#projects">Projects</a>
+            <a href="#timeline">Timeline</a>
+            <a href="#contact">Connect</a>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <p class="hero-name">Allu. Kamalakshmi Priya</p>
+            <h1>Crafting <span class="highlight">Intelligence</span><br>From <span class="highlight">Data</span></h1>
+            <p class="hero-subtitle">B.Tech Data Science Student &amp; AI Enthusiast</p>
+            <p class="hero-description">
+                I'm on a mission to transform raw data into actionable intelligence. As a Data Science student, I bridge the gap between complex algorithms and real-world impact. Every dataset tells a story &mdash; I'm here to decode it.
+            </p>
+            <div class="cta-group">
+                <a href="#projects" class="btn btn-primary">Explore My Work</a>
+                <a href="#contact" class="btn btn-secondary">Start a Conversation</a>
+            </div>
+        </div>
+        <div class="hero-3d" id="canvas-container"></div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills" class="chapter">
+        <div class="chapter-content">
+            <div class="chapter-number">CHAPTER 01</div>
+            <h2 class="chapter-title">My <span class="gradient">Arsenal</span> of Skills</h2>
+            <p class="chapter-text">Built through rigorous learning and hands-on project work, these are the tools and techniques I leverage to solve complex data problems.</p>
+            <div class="skills-showcase">
+                <div class="skill-domain">
+                    <div class="skill-header">
+                        <div class="skill-icon">&#128187;</div>
+                        <div class="skill-title-wrapper"><h3>Programming</h3><div class="skill-count">4 Core Skills</div></div>
+                    </div>
+                    <div class="skill-list">
+                        <span class="skill-pill">Python</span><span class="skill-pill">Java</span>
+                        <span class="skill-pill">Data Structures</span><span class="skill-pill">Algorithms</span>
+                    </div>
+                </div>
+                <div class="skill-domain">
+                    <div class="skill-header">
+                        <div class="skill-icon">&#128202;</div>
+                        <div class="skill-title-wrapper"><h3>Data &amp; Analytics</h3><div class="skill-count">6 Technologies</div></div>
+                    </div>
+                    <div class="skill-list">
+                        <span class="skill-pill">Pandas</span><span class="skill-pill">NumPy</span>
+                        <span class="skill-pill">Data Analysis</span><span class="skill-pill">Visualization</span>
+                        <span class="skill-pill">SQL</span><span class="skill-pill">Excel</span>
+                    </div>
+                </div>
+                <div class="skill-domain">
+                    <div class="skill-header">
+                        <div class="skill-icon">&#129302;</div>
+                        <div class="skill-title-wrapper"><h3>Machine Learning</h3><div class="skill-count">5 Specializations</div></div>
+                    </div>
+                    <div class="skill-list">
+                        <span class="skill-pill">Scikit-learn</span><span class="skill-pill">NLP</span>
+                        <span class="skill-pill">Deep Learning</span><span class="skill-pill">Computer Vision</span>
+                        <span class="skill-pill">Classification</span>
+                    </div>
+                </div>
+                <div class="skill-domain">
+                    <div class="skill-header">
+                        <div class="skill-icon">&#128295;</div>
+                        <div class="skill-title-wrapper"><h3>Tools &amp; Tech</h3><div class="skill-count">5 Platforms</div></div>
+                    </div>
+                    <div class="skill-list">
+                        <span class="skill-pill">GitHub</span><span class="skill-pill">Power BI</span>
+                        <span class="skill-pill">OpenCV</span><span class="skill-pill">VS Code</span>
+                        <span class="skill-pill">Jupyter</span>
+                    </div>
+                </div>
+                <div class="skill-domain">
+                    <div class="skill-header">
+                        <div class="skill-icon">&#9889;</div>
+                        <div class="skill-title-wrapper"><h3>Specializations</h3><div class="skill-count">4 Advanced Areas</div></div>
+                    </div>
+                    <div class="skill-list">
+                        <span class="skill-pill">Face Recognition</span><span class="skill-pill">Automation</span>
+                        <span class="skill-pill">Sentiment Analysis</span><span class="skill-pill">Workflow Design</span>
+                    </div>
+                </div>
+                <div class="skill-domain">
+                    <div class="skill-header">
+                        <div class="skill-icon">&#129504;</div>
+                        <div class="skill-title-wrapper"><h3>Soft Skills</h3><div class="skill-count">5 Competencies</div></div>
+                    </div>
+                    <div class="skill-list">
+                        <span class="skill-pill">Problem Solving</span><span class="skill-pill">Communication</span>
+                        <span class="skill-pill">Collaboration</span><span class="skill-pill">Leadership</span>
+                        <span class="skill-pill">Time Management</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="chapter">
+        <div class="chapter-content">
+            <div class="chapter-number">CHAPTER 02</div>
+            <h2 class="chapter-title">Stories in <span class="gradient">Code</span></h2>
+            <p class="chapter-text">Each project is a unique story of problem-solving, innovation, and learning. Here are the challenges I've tackled and the solutions I've built.</p>
+            <div class="projects-grid">
+
+                <div class="project-story">
+                    <div class="project-header">
+                        <div class="project-meta">
+                            <div class="project-icon">&#128200;</div>
+                            <div class="project-info">
+                                <h3>Stock Market Analytics</h3>
+                                <div class="project-category">Data Analysis &amp; Visualization</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="project-narrative">Built a comprehensive data pipeline to uncover hidden patterns in stock market movements. By cleaning and analyzing historical data, I generated actionable insights on volatility and price trends that could guide investment decisions.</p>
+                    <div class="project-highlights"><strong>Key Achievement:</strong> Developed predictive models revealing 85% correlation between market indicators, enabling smarter trading strategies.</div>
+                    <div class="tech-grid">
+                        <div class="tech-item"><span class="tech-emoji">&#128013;</span><span>Python</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128218;</span><span>Pandas</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128290;</span><span>NumPy</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128202;</span><span>Matplotlib</span></div>
+                    </div>
+                </div>
+
+                <div class="project-story">
+                    <div class="project-header">
+                        <div class="project-meta">
+                            <div class="project-icon">&#129302;</div>
+                            <div class="project-info">
+                                <h3>NLP Answer Evaluation System</h3>
+                                <div class="project-category">Natural Language Processing</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="project-narrative">Engineered an intelligent evaluation system that understands and grades student answers. Using NLP techniques, the system compares user responses against ideal solutions, generating similarity scores and constructive feedback automatically.</p>
+                    <div class="project-highlights"><strong>Key Achievement:</strong> Achieved 92% accuracy in answer evaluation with real-time feedback generation, helping educators scale assessment.</div>
+                    <div class="tech-grid">
+                        <div class="tech-item"><span class="tech-emoji">&#128172;</span><span>NLP</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128164;</span><span>NLTK</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#129504;</span><span>ML</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128013;</span><span>Python</span></div>
+                    </div>
+                </div>
+
+                <div class="project-story">
+                    <div class="project-header">
+                        <div class="project-meta">
+                            <div class="project-icon">&#128522;</div>
+                            <div class="project-info">
+                                <h3>Mood-Based Music Player</h3>
+                                <div class="project-category">Computer Vision &amp; Emotion AI</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="project-narrative">Created a real-time emotion detection system that reads your face and plays music matching your mood. Using facial recognition and emotion classification, the system creates a personalized listening experience that adapts to your emotional state.</p>
+                    <div class="project-highlights"><strong>Key Achievement:</strong> Built real-time facial analysis achieving 88% emotion detection accuracy, creating dynamic user experiences.</div>
+                    <div class="tech-grid">
+                        <div class="tech-item"><span class="tech-emoji">&#128065;</span><span>OpenCV</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128270;</span><span>Face Detection</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#129504;</span><span>ML</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128013;</span><span>Python</span></div>
+                    </div>
+                </div>
+
+                <div class="project-story">
+                    <div class="project-header">
+                        <div class="project-meta">
+                            <div class="project-icon">&#128202;</div>
+                            <div class="project-info">
+                                <h3>Blinkit Sales Intelligence Dashboard</h3>
+                                <div class="project-category">Business Intelligence &amp; Analytics</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="project-narrative">Designed an interactive Power BI dashboard that transforms raw sales data into strategic insights. The dashboard tracks KPIs, identifies trends, and reveals customer behavior patterns &mdash; enabling data-driven decision making at every level.</p>
+                    <div class="project-highlights"><strong>Key Achievement:</strong> Created comprehensive analytics dashboard tracking 50+ metrics, improving business decision speed by 40%.</div>
+                    <div class="tech-grid">
+                        <div class="tech-item"><span class="tech-emoji">&#128200;</span><span>Power BI</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128203;</span><span>Excel</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128202;</span><span>Analytics</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128451;</span><span>SQL</span></div>
+                    </div>
+                </div>
+
+                <div class="project-story">
+                    <div class="project-header">
+                        <div class="project-meta">
+                            <div class="project-icon">&#9881;</div>
+                            <div class="project-info">
+                                <h3>Smart Automation System</h3>
+                                <div class="project-category">Workflow Optimization &amp; Automation</div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="project-narrative">Architected an intelligent task-routing system that detects workflow bottlenecks and automatically redistributes work. Using data-driven logic, the system optimizes resource allocation, reducing delays and improving team efficiency.</p>
+                    <div class="project-highlights"><strong>Key Achievement:</strong> Reduced workflow bottlenecks by 65% through smart task reassignment, improving overall team productivity significantly.</div>
+                    <div class="tech-grid">
+                        <div class="tech-item"><span class="tech-emoji">&#128013;</span><span>Python</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#128295;</span><span>Algorithms</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#9889;</span><span>Automation</span></div>
+                        <div class="tech-item"><span class="tech-emoji">&#127919;</span><span>Logic Design</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- TIMELINE -->
+    <section id="timeline" class="chapter">
+        <div class="chapter-content">
+            <div class="chapter-number">CHAPTER 03</div>
+            <h2 class="chapter-title">My <span class="gradient">Journey</span></h2>
+            <p class="chapter-text">Every milestone shapes my path. Here's the timeline of my educational and professional growth, from foundational learning to emerging as a data science specialist.</p>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4>&#127891; Bachelor of Technology &mdash; Data Science</h4>
+                        <p><strong>NSRIT &nbsp;|&nbsp; 2023 &ndash; 2027 &nbsp;|&nbsp; CGPA: 8.61</strong></p>
+                        <p>Building strong foundations in machine learning, data analysis, and AI. Rigorous coursework in algorithms, statistics, and practical programming.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4>&#128218; Data Analysis Using Python Certification</h4>
+                        <p><strong>APSSDC &nbsp;|&nbsp; May &ndash; July 2025</strong></p>
+                        <p>Intensive online internship program focusing on real-world data analysis applications, hands-on projects, and industry best practices.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h4>&#128161; Portfolio Development Phase</h4>
+                        <p><strong>Ongoing &nbsp;|&nbsp; 2024 &ndash; 2027</strong></p>
+                        <p>Building diverse projects spanning NLP, Computer Vision, Business Intelligence, and Workflow Automation. Each project demonstrates growth and mastery.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="chapter contact-chapter">
+        <div class="contact-content">
+            <div class="chapter-number">FINAL CHAPTER</div>
+            <h2>Let's Write <span class="gradient">Our Next Story</span> Together</h2>
+            <p>I'm always excited to collaborate on impactful projects, discuss innovative ideas, or explore how data can transform businesses. Reach out &mdash; let's create something extraordinary.</p>
+            <div class="contact-methods">
+                <a href="tel:+916301142963" class="contact-method">
+                    <span class="contact-icon">&#128222;</span>
+                    <span>+91 6301142963</span>
+                </a>
+                <a href="mailto:priyaallu007@gmail.com" class="contact-method">
+                    <span class="contact-icon">&#9993;</span>
+                    <span>priyaallu007@gmail.com</span>
+                </a>
+                <a href="https://linkedin.com/in/kamalakshmipriya007" target="_blank" rel="noopener noreferrer" class="contact-method">
+                    <span class="contact-icon">&#128188;</span>
+                    <span>LinkedIn Profile</span>
+                </a>
+                <a href="https://github.com/KamalakshmiPriya" target="_blank" rel="noopener noreferrer" class="contact-method">
+                    <span class="contact-icon">&#128025;</span>
+                    <span>GitHub Repository</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // Scroll progress bar
+        window.addEventListener('scroll', () => {
+            const progress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            document.querySelector('.scroll-progress').style.width = progress + '%';
+        });
+
+        // Smooth nav scroll using GSAP ScrollToPlugin
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    gsap.to(window, { duration: 1, scrollTo: { y: target, offsetY: 80 }, ease: 'power3.inOut' });
+                }
+            });
+        });
+
+        // CTA button smooth scroll
+        document.querySelectorAll('.btn[href^="#"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(btn.getAttribute('href'));
+                if (target) {
+                    gsap.to(window, { duration: 1, scrollTo: { y: target, offsetY: 80 }, ease: 'power3.inOut' });
+                }
+            });
+        });
+
+        // GSAP scroll animations
+        gsap.utils.toArray('.skill-domain').forEach(el => {
+            gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%' }, opacity: 0, y: 50, duration: 0.8, ease: 'power2.out' });
+        });
+        gsap.utils.toArray('.project-story').forEach(el => {
+            gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%' }, opacity: 0, y: 60, duration: 0.9, ease: 'power2.out' });
+        });
+        gsap.utils.toArray('.timeline-item').forEach(el => {
+            gsap.from(el, { scrollTrigger: { trigger: el, start: 'top 85%' }, opacity: 0, x: -40, duration: 0.7, ease: 'power2.out' });
+        });
+
+        // Three.js 3D Hero Scene
+        window.addEventListener('load', () => {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setClearColor(0xffffff, 0);
+            container.appendChild(renderer.domElement);
+            camera.position.z = 6;
+
+            const group = new THREE.Group();
+            scene.add(group);
+
+            const shapes = [];
+
+            const geo1 = new THREE.IcosahedronGeometry(1.2, 1);
+            const mat1 = new THREE.MeshPhongMaterial({ color: 0x6366f1, emissive: 0x6366f1, emissiveIntensity: 0.4, shininess: 120 });
+            const mesh1 = new THREE.Mesh(geo1, mat1);
+            mesh1.position.set(-2.5, 1.5, 0);
+            group.add(mesh1); shapes.push({ mesh: mesh1, speed: 0.003 });
+
+            const geo2 = new THREE.OctahedronGeometry(1.5, 0);
+            const mat2 = new THREE.MeshPhongMaterial({ color: 0xa78bfa, emissive: 0xa78bfa, emissiveIntensity: 0.35, shininess: 100 });
+            const mesh2 = new THREE.Mesh(geo2, mat2);
+            mesh2.position.set(2.5, -1, 0);
+            group.add(mesh2); shapes.push({ mesh: mesh2, speed: 0.004 });
+
+            const geo3 = new THREE.TorusGeometry(1.3, 0.4, 16, 32);
+            const mat3 = new THREE.MeshPhongMaterial({ color: 0xf472b6, emissive: 0xf472b6, emissiveIntensity: 0.3, shininess: 110 });
+            const mesh3 = new THREE.Mesh(geo3, mat3);
+            mesh3.position.set(0, 2.2, -1);
+            group.add(mesh3); shapes.push({ mesh: mesh3, speed: 0.0035 });
+
+            const geo4 = new THREE.DodecahedronGeometry(0.9, 0);
+            const mat4 = new THREE.MeshPhongMaterial({ color: 0x06b6d4, emissive: 0x06b6d4, emissiveIntensity: 0.32, shininess: 105 });
+            const mesh4 = new THREE.Mesh(geo4, mat4);
+            mesh4.position.set(-1.5, -2, -1);
+            group.add(mesh4); shapes.push({ mesh: mesh4, speed: 0.00325 });
+
+            scene.add(new THREE.PointLight(0x6366f1, 2, 100));
+            const l2 = new THREE.PointLight(0xa78bfa, 1.8, 100); l2.position.set(-8, -5, 8); scene.add(l2);
+            const l3 = new THREE.PointLight(0xf472b6, 1.5, 100); l3.position.set(5, 8, -5); scene.add(l3);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+
+            let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+            document.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                targetX = (e.clientX - rect.left) / rect.width - 0.5;
+                targetY = (e.clientY - rect.top) / rect.height - 0.5;
+            });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                mouseX += (targetX - mouseX) * 0.08;
+                mouseY += (targetY - mouseY) * 0.08;
+                shapes.forEach((s, i) => {
+                    s.mesh.rotation.x += s.speed;
+                    s.mesh.rotation.y += s.speed * 0.7;
+                    s.mesh.position.y += Math.sin(Date.now() * 0.0003 + i) * 0.008;
+                });
+                group.rotation.x = mouseY * 0.5;
+                group.rotation.y = mouseX * 0.5;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        });
+    </script>
+</body>
+</html>
